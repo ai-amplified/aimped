@@ -1,6 +1,7 @@
 ![aimped](https://dev.aimped.ai/static/media/AimpedBirdLogo.0b3c7cc26d31afe7bd73db496acb01d1.svg)
 # **aimped**
-
+[![PyPI version](https://badge.fury.io/py/aimped.svg)](https://badge.fury.io/py/aimped)
+[![Downloads](https://pepy.tech/badge/aimped)](https://pepy.tech/project/aimped)
 
 
 **Aimped is a unique python library that provides classes and functions for only exclusively business-tailored AI-based models.**   
