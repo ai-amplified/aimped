@@ -18,7 +18,6 @@ pip install aimped
 import aimped
 print(aimped.__version__)
 ```
-## Examples  
 
 ### Example 1
 
@@ -31,11 +30,13 @@ print(result)
 ```
 
 ### Example 2
-```python  
-from aimped.sound.utils import get_audio_duration
 
-duration = get_audio_duration(audio_path="/path/to/audio_file")
-print(duration)
+```python  
+from aimped.utils import LimitChecker
+
+checker = LimitChecker()
+checker.check_video("video.mp4", input_limit=120)
+# Output: True
 
 ```
 
