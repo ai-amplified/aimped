@@ -2,7 +2,7 @@ import json
 import logging
 
 
-def get_logger(log_file='Kserve-Glowol.log', log_level=logging.DEBUG):
+def get_logger(log_file='KSERVE.log', log_level=logging.DEBUG):
     """Returns the logger object for logging the output of the server.
     Parameters:
     ----------------
