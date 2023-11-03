@@ -1,7 +1,7 @@
-#Authors: Russell C., Raife H., Forrest F.
-#Date: 2023-03-20
-#Copyright: (c) 2023 Aimped
-#Description: This is the setup file for the Aimped library.
+# Authors: Russell C., Raife H., Forrest F.
+# Date: 2023-03-20
+# Copyright: (c) 2023 Aimped
+# Description: This is the setup file for the Aimped library.
 
 import setuptools
 from aimped.version import __version__
