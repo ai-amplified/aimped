@@ -1,5 +1,5 @@
 # Authors: Russell C., Raife H., Forrest F.
-# Date: 2023-03-20
+# Date: 2023-11-08
 # Copyright: (c) 2023 Aimped
 # Description: This is the setup file for the Aimped library.
 
@@ -12,13 +12,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[ 
                         'nltk',
-                        'numpy',
                         'pandas',
                         'scikit-learn',
                         "pydantic",
-                        "opencv-python",
-                        "PyPDF2",
-                        "pydub",
                         ],
     author="Russell C.",
     author_email="russell@aimped.com",

@@ -36,13 +36,6 @@ import os
 import io
 import base64
 
-try:
-    import cv2
-    import PyPDF2
-    from pydub import AudioSegment
-except ImportError as e:
-    print(f"Please install the required dependencies: {str(e)}")
-
 class LimitChecker():
 
     def __init__(self):
@@ -67,6 +60,11 @@ class LimitChecker():
             
     def check_audio(self, audio_input, input_limit=600, audio_format=""):
         """ Checks if the audio input is within the limit"""
+        try:
+            from pydub import AudioSegment
+        except ImportError as e:
+            print(f"Please install the required dependencies for input limit checker. {str(e)}")
+            
         audio = None 
         if isinstance(audio_input, str):
             # If input_file is a string (file path)
@@ -119,6 +117,11 @@ class LimitChecker():
     def check_pdf(self, pdf_input, input_limit=10, pdf_format=""):
         """ Checks if the number of pages in the pdf input is within the limit"""
         try:
+            import PyPDF2
+        except ImportError as e:
+            print(f"Please install the required dependencies for input limit checker. {str(e)}")
+        
+        try:
             pdfReader = None
             if isinstance(pdf_input, str):
                 # if the input is a file path
@@ -143,6 +146,11 @@ class LimitChecker():
     
     def check_video(self, video_input, input_limit=600, video_format=""):
         """ Checks if the video input is within the limit"""
+        try:
+            import cv2
+        except ImportError as e:
+            print(f"Please install the required dependencies for input limit checker. {str(e)}")
+            
         try:
             video = None
             if os.path.isfile(video_input):
