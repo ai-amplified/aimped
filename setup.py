@@ -1,5 +1,5 @@
 # Authors: Russell C., Raife H., Forrest F.
-# Date: 2023-11-08
+# Date: 2023-11-09
 # Copyright: (c) 2023 Aimped
 # Description: This is the setup file for the Aimped library.
 
@@ -32,4 +32,3 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
 )
-

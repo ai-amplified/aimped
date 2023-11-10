@@ -1,6 +1,10 @@
+import os
+import io
+import base64
 import json
 import logging
 
+############################################# LOGGER #############################################
 
 def get_handler(log_file='KSERVE.log', log_level=logging.DEBUG):
     """Returns the logger object for logging the output of the server.
@@ -31,10 +35,7 @@ def get_handler(log_file='KSERVE.log', log_level=logging.DEBUG):
     logger.addHandler(f_handler)
     return logger
 
-############################################# INPUT LIMIT CHECKER #############################################
-import os
-import io
-import base64
+########################################### INPUT LIMIT CHECKER ######################################
 
 class LimitChecker():
 
@@ -58,7 +59,7 @@ class LimitChecker():
         except:
             raise ValueError("An error occurred when processing text_input.")
             
-    def check_audio(self, audio_input, input_limit=600, audio_format=""):
+    def check_audio(self, audio_input, input_limit=900, audio_format=""):
         """ Checks if the audio input is within the limit"""
         try:
             from pydub import AudioSegment
@@ -144,7 +145,7 @@ class LimitChecker():
         except Exception as e:
             raise ValueError(f"Error processing PDF. {str(e)}.")
     
-    def check_video(self, video_input, input_limit=600, video_format=""):
+    def check_video(self, video_input, input_limit=900, video_format=""):
         """ Checks if the video input is within the limit"""
         try:
             import cv2
@@ -169,7 +170,7 @@ class LimitChecker():
             if video:
                 video.release()
     
-    def check_dicom(self, dicom_list, input_limit=1):
+    def check_dicom(self, dicom_list, input_limit=4):
         """ Checks if the number of dicom files input is within the limit"""
         try:
             size = len(dicom_list)
