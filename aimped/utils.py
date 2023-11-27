@@ -4,6 +4,12 @@ import base64
 import json
 import logging
 
+try:
+    from pydub import AudioSegment
+    import cv2
+except:
+    pass
+
 ############################################# LOGGER #############################################
 
 def get_handler(log_file='KSERVE.log', log_level=logging.DEBUG):
@@ -43,7 +49,7 @@ class LimitChecker():
         """LimitChecker class constructor"""
         pass
         
-    def check_text(self, text_input, input_limit=5000):
+    def check_text(self, text_input, input_limit=3500):
         """ Checks if the text input is within the limit"""
         try:
             size = 0
@@ -59,53 +65,67 @@ class LimitChecker():
         except:
             raise ValueError("An error occurred when processing text_input.")
             
-    def check_audio(self, audio_input, input_limit=900, audio_format=""):
-        """ Checks if the audio input is within the limit"""
+    def check_audio(self, audio_input, input_limit=900, size=25, audio_format=""):
+        """Checks if the audio input is within the limit. This needs pydub to be installed."""
         try:
-            from pydub import AudioSegment
-        except ImportError as e:
-            print(f"Please install the required dependencies for input limit checker. {str(e)}")
-            
-        audio = None 
-        if isinstance(audio_input, str):
-            # If input_file is a string (file path)
-            try:
-                audio = AudioSegment.from_file(audio_input)
-                duration_ms = len(audio)
-                duration_seconds = duration_ms / 1000.0  # Convert to seconds
-                return duration_seconds <= input_limit
-            except Exception as e:
-                error_message = f"Error getting duration of {audio_input}: {e}"
-                logging.error(error_message)
-                return None
-        elif isinstance(audio_input, bytes):
-            # If input_file is binary data
-            try:
-                audio = AudioSegment.from_file(io.BytesIO(audio_input))
-                duration_ms = len(audio)
-                duration_seconds = duration_ms / 1000.0  # Convert to seconds
-                return  duration_seconds <= input_limit
-            except Exception as e:
-                error_message = f"Error getting duration from binary data: {e}"
-                logging.error(error_message)
-                return None
-        elif audio_format == "base64":
-            # If input_file is base64 encoded
-            try:
-                audio = AudioSegment.from_file(base64.b64decode(audio_input))
-                duration_ms = len(audio)
-                duration_seconds = duration_ms / 1000.0
-                return duration_seconds <= input_limit
-            except Exception as e:
-                error_message = f"Error getting duration from base64 data: {e}"
-                logging.error(error_message)
-                return None
-        else:
-            error_message = "Unsupported input type. Please provide a file path (str) or binary data (bytes)."
-            logging.error(error_message)
-            return None
-    
+            # First, check if the size is less than 25MB size
+            if isinstance(audio_input, str) and os.path.getsize(audio_input) <= size * 1024 * 1024:
+                return True
+            elif isinstance(audio_input, bytes) and len(audio_input) <= size * 1024 * 1024:
+                return True
+            elif audio_format == "base64":
+                decoded_audio = base64.b64decode(audio_input)
+                if len(decoded_audio) <= size * 1024 * 1024:
+                    return True
 
+            # If the size check fails, proceed with the duration check
+            if isinstance(audio_input, str) and os.path.isfile(audio_input):
+                audio = AudioSegment.from_file(audio_input)
+            elif isinstance(audio_input, bytes):
+                audio = AudioSegment.from_file(io.BytesIO(audio_input))
+            elif audio_format == "base64":
+                audio = AudioSegment.from_file(io.BytesIO(base64.b64decode(audio_input)))
+            else:
+                raise ValueError("Unsupported input type. Please provide a file path (str) or binary data (bytes).")
+
+            duration_seconds = len(audio) / 1000.0  # Convert to seconds
+            return duration_seconds <= input_limit
+
+        except Exception as e:
+            raise ValueError(f"Error processing audio input: {str(e)}")
+
+    def check_video(self, video_input, input_limit=900, size=25, video_format=""):
+        """Checks if the video input is within the limit. This needs opencv-python to be installed."""
+        try:
+            # First, check if the size is less than 25MB size
+            if isinstance(video_input, str) and os.path.getsize(video_input) <= size * 1024 * 1024:
+                return True
+            elif isinstance(video_input, bytes) and len(video_input) <= size * 1024 * 1024:
+                return True
+            elif video_format == "base64":
+                decoded_video = base64.b64decode(video_input)
+                if len(decoded_video) <= size * 1024 * 1024:
+                    return True
+
+            # If the size check fails, proceed with the duration check
+            video = None
+            if isinstance(video_input, str) and os.path.isfile(video_input):
+                video = cv2.VideoCapture(video_input)
+                total_frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
+                frames_per_second = video.get(cv2.CAP_PROP_FPS)
+                video_length_in_seconds = total_frames / frames_per_second
+                return video_length_in_seconds <= input_limit
+
+            elif video_format == "base64":
+                video = cv2.VideoCapture(io.BytesIO(base64.b64decode(video_input)))
+                return (video.get(cv2.CV_CAP_PROP_FRAME_COUNT) / video.get(cv2.CAP_PROP_FPS) if video else 0) <= input_limit
+
+        except Exception as e:
+            raise ValueError(f"Error processing video input: {str(e)}")
+        finally:
+            if video:
+                video.release()
+    
     def check_images(self, images_list, input_limit=4):
         """ Checks if the number of images input is within the limit"""
         try:
@@ -115,7 +135,7 @@ class LimitChecker():
         except:
             raise ValueError("Please provide a correct image list input")
             
-    def check_pdf(self, pdf_input, input_limit=10, pdf_format=""):
+    def check_pdf(self, pdf_input, input_limit=4, pdf_format=""):
         """ Checks if the number of pages in the pdf input is within the limit"""
         try:
             import PyPDF2
@@ -144,32 +164,7 @@ class LimitChecker():
                 return len(pdfReader.pages) <= input_limit
         except Exception as e:
             raise ValueError(f"Error processing PDF. {str(e)}.")
-    
-    def check_video(self, video_input, input_limit=900, video_format=""):
-        """ Checks if the video input is within the limit"""
-        try:
-            import cv2
-        except ImportError as e:
-            print(f"Please install the required dependencies for input limit checker. {str(e)}")
-            
-        try:
-            video = None
-            if os.path.isfile(video_input):
-                video = cv2.VideoCapture(video_input)
-                total_frames = video.get(cv2.CAP_PROP_FRAME_COUNT)
-                frames_per_second = video.get(cv2.CAP_PROP_FPS)
-                video_length_in_seconds = total_frames / frames_per_second
-                logging.info(f"Video length: {video_length_in_seconds}")
-                return video_length_in_seconds <= input_limit
-            elif video_format == "base64":
-                video = cv2.VideoCapture(base64.b64decode(video_input))           
-                return (video.get(cv2.CV_CAP_PROP_FRAME_COUNT) / video.get(cv2.CAP_PROP_FPS) if video else 0) <= input_limit
-        except:
-            raise ValueError("Please provide a correct video input")
-        finally:
-            if video:
-                video.release()
-    
+      
     def check_dicom(self, dicom_list, input_limit=4):
         """ Checks if the number of dicom files input is within the limit"""
         try:
@@ -182,15 +177,16 @@ class LimitChecker():
          
 # if __name__ == "__main__":
 #     checker = LimitChecker()
-#     text = "This is a text"
-#     print("Text: {}".format(checker.check_text(text)))
-#     audio = "audio.mp3"
-#     print("Audio: {}".format(checker.check_audio(audio)))
-#     images = ["image1.jpg", "image2.jpg"]
-#     print("Images: {}".format(checker.check_images(images)))
-#     pdf = "pdf.pdf"
-#     print("PDF: {}".format(checker.check_pdf(pdf)))
-#     video = "video.mp4"
-#     print("Video: {}".format(checker.check_video(video)))
-#     dicom = ["dicom1.dcm", "dicom2.dcm"]
-#     print("Dicom: {}".format(checker.check_dicom(dicom)))
+# #     text = "This is a text"
+# #     print("Text: {}".format(checker.check_text(text)))
+#     # audio = "audio_gt_25mb.mp3"
+#     # audio = "audio_lt_25mb.mp3"
+#     # print("Audio: {}".format(checker.check_audio(audio)))
+# #     images = ["image1.jpg", "image2.jpg"]
+# #     print("Images: {}".format(checker.check_images(images)))
+# #     pdf = "pdf.pdf"
+#     # print("PDF: {}".format(checker.check_pdf(pdf)))
+#     # video = "audio_gt_25mb.mp3"
+#     # print("Video: {}".format(checker.check_video(video)))
+# #     dicom = ["dicom1.dcm", "dicom2.dcm"]
+# #     print("Dicom: {}".format(checker.check_dicom(dicom)))
