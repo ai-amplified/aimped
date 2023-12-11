@@ -1,9 +1,11 @@
 # Author: Russell
-# Date: 2023-Nov-10
+# Date: 2021-12-11
+import logging
 try:
     import boto3
 except ImportError as e:
-    print(f"Please install the required dependencies for S3FileManager. {str(e)}")
+    logging.warning(f"Please install the required dependencies for S3FileManager. {str(e)}")
+
 
 class S3FileManager:
     """ Class to manage files in S3"""
@@ -17,10 +19,21 @@ class S3FileManager:
         """ Write a local file to S3"""
         try:
             self.s3.upload_file(local_file_path, bucket_name, s3_file_path)
-            print(f"File uploaded successfully to s3://{bucket_name}/{s3_file_path}")
+            logging.info(f"File uploaded successfully to s3://{bucket_name}/{s3_file_path}")
         except Exception as e:
-            print(f"Error uploading file to S3: {e}")
+            logging.error(f"Error uploading file to S3: {e}")
+
             
+    def download_file_from_s3(self, bucket_name, s3_file_path, local_file_path):
+        """ Download a file from S3 to local"""
+        try:
+            self.s3.download_file(bucket_name, s3_file_path, local_file_path)
+            logging.info(f"File downloaded successfully from s3://{bucket_name}/{s3_file_path} to {local_file_path}")
+        except Exception as e:
+            logging.error(f"Error downloading file from S3: {e}")
+
+
+
             
 # if __name__ == "__main__":
 #     from decouple import config
