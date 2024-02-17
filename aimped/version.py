@@ -4,4 +4,4 @@
 # Description: Version file for AIMPED
 
 
-__version__ = "0.2.01"
+__version__ = "0.2.02"

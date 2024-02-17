@@ -101,6 +101,7 @@ class AimpedAPI(Connect):
                 )
 
                 result = self.run_model(model_id, payload)
+                return result
 
                 keep_running = True
                 while keep_running:

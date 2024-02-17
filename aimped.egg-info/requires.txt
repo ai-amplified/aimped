@@ -2,4 +2,3 @@ nltk
 pandas
 scikit-learn
 pydantic
-
