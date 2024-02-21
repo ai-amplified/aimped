@@ -16,14 +16,15 @@ setuptools.setup(
                         'scikit-learn',
                         "pydantic",
                         ],
-    author="Russell C.",
-    author_email="russell@aimped.com",
+    author="F. Faraday",
+    author_email="forest@aimped.ai",
     maintainer="aimped",
     maintainer_email="contact@aimped.com",
+    github="https://github.com/ai-amplified/aimped",
     description="Aimped is a unique library that provides classes and functions for only exclusively business-tailored AI-based NLP models.",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    url="https://dev.aimped.ai/", 
+    url="https://aimped.ai/", 
     
     classifiers=[
         "Programming Language :: Python :: 3",
