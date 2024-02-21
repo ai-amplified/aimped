@@ -45,6 +45,7 @@ class AimpedAPI(Connect):
                     'Authorization': f'Bearer {self.token_data["access_token"]}',
                     'Content-Type': 'application/json',
                 }
+                print("istek atıldı")
                 result = requests.request(
                     'POST',
                     f'{self.options["base_url"]}/pub/backend/api/v1/model_run_prediction/{model_id}/',

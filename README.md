@@ -1,4 +1,4 @@
-![aimped](https://dev.aimped.ai/static/media/AimpedBirdLogo.0b3c7cc26d31afe7bd73db496acb01d1.svg)
+![aimped](https://aimped.ai/static/media/birdLogobeta2.1601fdabf769f01d7b183275f51febb9.svg)
 
 # **aimped**
 
@@ -68,7 +68,7 @@ result = api_service.run_model_callback(model_id, payload, callback)
 Some of the models supports file inputs. These inputs are accepted as URIs. Here is the usage of API for file uploads.
 
 ```python
-input = aimped.file_upload(
+input = api_service.file_upload(
     model_id,
     '/Users/joe/Downloads/xyz.pdf'  # sample file path to upload
     )
