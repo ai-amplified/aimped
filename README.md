@@ -5,7 +5,9 @@
 [![PyPI version](https://badge.fury.io/py/aimped.svg)](https://badge.fury.io/py/aimped)
 [![Downloads](https://pepy.tech/badge/aimped)](https://pepy.tech/project/aimped)
 
-**Aimped is a unique python library that provides classes and functions for only exclusively business-tailored AI-based models.**
+**Aimped Inc.** is a Collaborative Model Sharing Platform for only Carefully curated AI models developed by Aimped and the AI Community – proven and ready-to-use.
+
+**<code>aimped</code> is a unique python library that provides classes and functions for only exclusively business-tailored AI-based models.**
 In this version, we provide the following features:
 API service, Sound processing tools and functions, NLP tools and functions, and a pipeline class for NLP tasks.
 
