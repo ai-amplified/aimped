@@ -19,7 +19,7 @@ setuptools.setup(
     author="F. Faraday",
     author_email="forest@aimped.ai",
     maintainer="aimped",
-    maintainer_email="contact@aimped.com",
+    maintainer_email="contact@aimped.ai",
     github="https://github.com/ai-amplified/aimped",
     description="Aimped is a unique library that provides classes and functions for only exclusively business-tailored AI-based NLP models.",
     long_description=open('README.md').read(),
