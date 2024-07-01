@@ -102,3 +102,107 @@ def RelationResults(sentences, ner_chunk_results, relation_classifier,
             return end_df[['firstCharEnt1', 'lastCharEnt1', 'entity1', 'chunk1',
                            'firstCharEnt2', 'lastCharEnt2', 'entity2', 'chunk2', 'label', 'score']].to_dict(
                 orient='records')
+
+########################## neo4j knowledge graph ##########################
+import json
+from neo4j import GraphDatabase
+
+## Creating a Connection Class
+class Neo4j:
+
+    def __init__(self, uri, user, pwd, db=None):
+
+        self.__url = uri
+        self.__user = user
+        self.__pwd = pwd
+        self.__driver = None
+        self.db = db
+        try:
+            self.__driver = GraphDatabase.driver(self.__url, auth=(self.__user, self.__pwd))
+            print("Connection Successful!")
+
+        except Exception as e:
+            print("Failed to create the driver:", e)
+
+    def close(self):
+
+        if self.__driver is not None:
+            self.__driver.close()
+            
+
+    def create_neo4j_query(self, json_output=None, json_file=None):
+        
+        if json_output:
+            data = data["output"]["data_json"]["result"]
+        elif json_file:
+            with open(json_file) as f:
+                data = json.load(f)
+            data = data["output"]["data_json"]["result"]
+            
+        queries = []
+        for i in data:
+            for item in i:
+                entity1 = item["entity1"].replace("-","_")
+                chunk1 = item["chunk1"].replace("'","")
+                entity2 = item["entity2"].replace("-","_")
+                chunk2 = item["chunk2"].replace("-","_")
+                label = item["label"].replace("-","_")
+                
+                query = f"""
+                MERGE (e1:{entity1} {{name: '{chunk1}'}})
+                MERGE (e2:{entity2} {{name: '{chunk2}'}})
+                MERGE (e1)-[:{label}]->(e2)
+                """
+                queries.append(query)
+        print("Queries Created!")
+        return queries            
+
+    def run_query(self, query, parameters=None, db=None):
+        if db is None:
+            db = self.db
+        assert self.__driver is not None, "Driver not initialized!"
+        session = None
+        response = None
+
+        try:
+            session = self.__driver.session(database=db) if db is not None else self.__driver.session()
+            response = list(session.run(query, parameters))
+        except Exception as e:
+            print("Query failed:", e)
+        finally:
+            if session is not None:
+                session.close()
+        return response
+    
+    def write_data(self, queries=None, db=None):
+        if db is None:
+            db = self.db
+        try:
+            assert self.__driver is not None, "Driver not initialized!"
+        except AssertionError as e:
+            print(e)
+        try:
+            assert isinstance(queries, list), "Queries should be a list!"
+        except AssertionError as e:
+            print(e)
+        try:
+            assert len(queries) > 0, "Queries list is empty!"
+        except AssertionError as e:
+            print(e)
+        try:
+            print("Writing data to Neo4j...")
+            for query in queries:
+                self.run_query(query=query, db=db)  
+            print("Data written successfully!")  
+        except Exception as e:
+            print("Failed to write data:", e)
+
+    
+    
+
+
+
+
+
+
+    

@@ -15,6 +15,7 @@ setuptools.setup(
                         'pandas',
                         'scikit-learn',
                         "pydantic",
+                        "neo4j",
                         ],
     author="F. Faraday",
     author_email="forest@aimped.ai",
