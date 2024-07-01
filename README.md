@@ -5,7 +5,11 @@
 [![PyPI version](https://badge.fury.io/py/aimped.svg)](https://badge.fury.io/py/aimped)
 [![Downloads](https://pepy.tech/badge/aimped)](https://pepy.tech/project/aimped)
 
-**Aimped Inc.** is a Collaborative Model Sharing Platform for only Carefully curated AI models developed by Aimped and the AI Community – proven and ready-to-use.
+Welcome to **Aimped Inc.**: an LLMs-in-the-loop AI Platform.
+
+Aimped is a distinctive AI platform offering model inference and development, harnessing the power of LLMs. Our innovative approach ensures quick, cost-effective, and efficient model training and evaluation. Additionally, we provide user-friendly UI-based AI applications and LLM Agents, making advanced AI accessible and easy to use.
+
+Moreover, we will soon allow model uploads and enable users to earn money. This will encourage the open-source community to share models, reducing redundant training and computing costs while fostering collaboration and innovation.
 
 **<code>aimped</code> is a unique python library that provides classes and functions for only exclusively business-tailored AI-based models.**
 In this version, we provide the following features:
