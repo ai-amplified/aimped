@@ -133,7 +133,7 @@ class Neo4j:
     def create_neo4j_query(self, json_output=None, json_file=None):
         
         if json_output:
-            data = data["output"]["data_json"]["result"]
+            data = json_output["output"]["data_json"]["result"]
         elif json_file:
             with open(json_file) as f:
                 data = json.load(f)
